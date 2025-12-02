@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. Elara - Welcome</title>
+<style>body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  animation: floatBg 8s ease-in-out infinite alternate;
+}
+
+@keyframes floatBg {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.container {
+  background: #fff;
+  padding: 45px 35px;
+  border-radius: 30px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  position: relative;
+  overflow: hidden;
+  animation: popIn 0.8s ease forwards;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+h1 {
+  font-size: 32px;
+  color: #ff6f61;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px #ffd6d6;
+  animation: wiggle 1s infinite alternate;
+}
+
+@keyframes wiggle {
+  0% { transform: rotate(-2deg); }
+  100% { transform: rotate(2deg); }
+}
+
+p.subtitle {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 30px;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 18px rgba(255,111,97,0.3);
+}
+
+.btn img {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.btn-google {
+  background: linear-gradient(45deg, #ffffff, #f0f0f0);
+  border: 1px solid #ccc;
+  color: #444;
+}
+
+.btn-google:hover {
+  background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+}
+
+.btn-apple {
+  background: linear-gradient(45deg, #000000, #333333);
+  color: white;
+}
+
+.btn-apple:hover {
+  background: linear-gradient(45deg, #333333, #555555);
+}
+
+.footer {
+  font-size: 12px;
+  color: #555;
+  margin-top: 25px;
+  line-height: 1.4;
+}
+
+.footer a {
+  color: #ff6f61;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+  color: #ff3b2e;
+}
+
+/* Optional floating bubbles for whimsy */
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.2;
+  animation: float 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes float {
+  0% { transform: translateY(100vh) translateX(0) rotate(0deg); }
+  100% { transform: translateY(-150px) translateX(50px) rotate(360deg); }
+}
+  
+</style>
+</head>
+<body>
+
+<div class="container" id="loginPage">
+  <h1>Dr. Elara 👋</h1>
+  <p class="subtitle">You're in the right place </p>
+
+  <button class="btn btn-google" onclick="login('google')">
+    <img src="google.jpg" alt="Google Logo">
+    Continue with Google
+  </button>
+
+  <button class="btn btn-apple" onclick="login('apple')">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple Logo">
+    Continue with Apple
+  </button>
+
+  <div class="footer">
+    By signing up with Elara you agree to its <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>.
+  </div>
+</div>
+
+<script>
+function login(provider) {
+  // Simulate login process
+  console.log("Logging in with " + provider);
+
+  // For real app, integrate Google/Apple OAuth here
+
+  // Redirect to pre-start confirmation page
+  window.location.href = "hear.html"; // Replace with your actual pre-start HTML page
+}
+</script>
+
+</body>
+  </html>
+  
