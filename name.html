@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. Elara - AI Therapist</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:Arial,sans-serif; background:#e3f4f4; height:100vh; display:flex; flex-direction:column; transition: background 0.3s, color 0.3s; }
+  body.dark { background:#121212; color:#eee; }
+
+  /* Fade-in animation */
+  .fade-in { animation: fadeIn 0.6s ease forwards; opacity:0; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(15px);} to{ opacity:1; transform: translateY(0);} }
+
+  /* Loading Screen */
+  #loadingScreen {
+    position: fixed; inset:0; background:#e3f4f4;
+    display:flex; justify-content:center; align-items:center; flex-direction:column;
+    z-index: 10;
+  }
+  #loadingScreen.dark { background:#121212; }
+  .loader {
+    width:55px; height:55px; border-radius:50%; border:5px solid #1e88e5;
+    border-top-color: transparent; animation: spin 1s linear infinite; margin-bottom:20px;
+  }
+  @keyframes spin{100%{transform: rotate(360deg);}}
+  .loading-text { font-size:18px; color:#1e88e5; font-weight:bold; animation: fadePulse 1.6s infinite ease-in-out; }
+  .dark .loading-text { color:#90caf9; }
+  @keyframes fadePulse{0%,100%{opacity:0.3;}50%{opacity:1;}}
+
+  /* Header */
+  .header { background:#1e88e5; color:white; font-size:22px; font-weight:bold; text-align:center; padding:18px 0; position:relative; flex-shrink:0; }
+  .dark .header { background:#0d47a1; }
+  .hamburger { position:absolute; left:20px; top:50%; transform:translateY(-50%); font-size:28px; cursor:pointer; }
+
+  /* Chat */
+  .chat-container { flex:1; display:none; overflow:hidden; position:relative; }
+  .sidebar { width:300px; background:#fff; padding:30px 20px; text-align:center; box-shadow:2px 0 15px rgba(0,0,0,0.08); position:absolute; left:-320px; top:0; bottom:0; transition:left 0.3s ease; z-index:2; border-radius:0 15px 15px 0; }
+  .dark .sidebar { background:#1e1e1e; color:#eee; box-shadow:2px 0 15px rgba(255,255,255,0.05); }
+  .sidebar.show { left:0; }
+  .sidebar img { width:150px; height:150px; border-radius:50%; object-fit:cover; }
+  .name { font-size:28px; font-weight:bold; color:#1e88e5; margin-top:15px; }
+  .dark .name { color:#90caf9; }
+  .tagline { font-size:16px; color:#444; margin-top:10px; }
+  .dark .tagline { color:#bbb; }
+
+  #messages { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:12px; }
+  .msg { display:flex; align-items:flex-start; }
+  .msg img { width:42px; height:42px; border-radius:50%; margin-right:12px; object-fit:cover; }
+  .bubble { background:#fff; padding:14px 16px; border-radius:16px; max-width:70%; font-size:16px; word-wrap:break-word; color:#000; }
+  .dark .bubble { background:#333; color:#eee; }
+  .me { flex-direction:row-reverse; }
+  .me img { margin-left:12px; margin-right:0; object-fit:cover; }
+  .me .bubble { background:#1e88e5; color:white; }
+  .dark .me .bubble { background:#90caf9; color:#121212; }
+
+  /* Typing animation */
+  .typing .bubble::after { content:''; display:inline-block; width:8px; height:8px; margin:0 3px; background-color:#999; border-radius:50%; animation: blink 1.4s infinite both; }
+  @keyframes blink {0%,80%,100%{opacity:0;}40%{opacity:1;}}
+
+  /* Input box */
+  .input-box { display:flex; padding:14px 16px; border-top:1px solid #ccc; background:white; flex-shrink:0; }
+  .dark .input-box { background:#1e1e1e; border-top:1px solid #444; }
+  .input-box input { flex:1; padding:12px 16px; border:1px solid #ccc; border-radius:30px; outline:none; font-size:16px; }
+  .dark .input-box input { border:1px solid #555; background:#333; color:#eee; }
+  .input-box button { padding:12px 20px; margin-left:10px; border:none; border-radius:30px; background:#1e88e5; color:white; font-size:16px; cursor:pointer; }
+  .dark .input-box button { background:#90caf9; color:#121212; }
+
+  /* Dark mode toggle */
+  #darkModeBtn { position:absolute; right:20px; top:50%; transform:translateY(-50%); background:none; border:none; font-size:20px; cursor:pointer; color:white; }
+
+  /* Responsive */
+  @media(max-width:700px){ .sidebar { width:240px; left:-260px; padding:20px; } .bubble{ font-size:14px; max-width:80%; padding:12px 14px; } }
+</style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loadingScreen">
+  <div class="loader"></div>
+  <div class="loading-text">Preparing your session...</div>
+</div>
+
+<!-- Header -->
+<div class="header"> 
+  <span class="hamburger" onclick="toggleSidebar()">☰</span>
+  Session with Dr. Elara
+  <button id="darkModeBtn" title="Toggle Dark Mode">🌓</button>
+</div>
+
+<!-- Chat -->
+<div class="chat-container" id="chatContainer">
+  <div class="sidebar" id="sidebar" style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
+    <div>
+      <img src="therapist.jpg">
+      <div class="name">Dr. Elara</div>
+      <div class="tagline">Your Therapist. I’m here to listen and support you anytime.</div>
+    </div>
+    <button id="logoutBtn" style="padding:12px 25px; border:none; border-radius:25px; background:#e53935; color:white; font-weight:600; cursor:pointer; font-size:16px; margin-bottom:10px;">Logout</button>
+  </div>
+
+  <div style="flex:1; display:flex; flex-direction:column;">
+    <div id="messages"></div>
+    <div class="input-box">
+      <input id="userInput" type="text" placeholder="Type your message...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- Name input page -->
+<div id="namePage" style="display:none; justify-content:center; align-items:center; height:100vh; flex-direction:column; background:#e3f4f4;">
+  <div style="background:white; padding:40px 30px; border-radius:20px; max-width:400px; width:90%; text-align:center; box-shadow:0 8px 25px rgba(0,0,0,0.15);">
+    <h1 style="font-size:28px; color:#1e88e5; font-weight:bold; margin-bottom:20px;">What should we call you?</h1>
+    <p style="font-size:16px; color:#444; margin-bottom:25px;">Please enter your name below:</p>
+    <input type="text" id="username" placeholder="Your name here" style="width:100%; padding:12px 15px; font-size:16px; border-radius:25px; border:1px solid #ccc; outline:none; margin-bottom:25px;">
+    <button onclick="saveName()" style="background:#1e88e5; color:white; font-weight:600; border:none; padding:12px 30px; border-radius:25px; font-size:16px; cursor:pointer;">Continue</button>
+  </div>
+</div>
+
+<script>
+const API_KEY = "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";
+const messagesDiv = document.getElementById("messages");
+const input = document.getElementById("userInput");
+const sidebar = document.getElementById("sidebar");
+const chatContainer = document.getElementById("chatContainer");
+const namePage = document.getElementById("namePage");
+const darkBtn = document.getElementById("darkModeBtn");
+
+let chatHistory = JSON.parse(localStorage.getItem("elara_history") || "[]");
+
+// Toggle sidebar
+function toggleSidebar(){ sidebar.classList.toggle("show"); }
+function isNearBottom(){ return messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 50; }
+function scrollToBottom(){ messagesDiv.scrollTop = messagesDiv.scrollHeight; }
+
+// Render chat history
+function renderHistory() {
+  messagesDiv.innerHTML = "";
+  chatHistory.forEach(msg => {
+    const div = document.createElement("div");
+    div.classList.add("msg");
+    if(msg.sender==="me") div.classList.add("me");
+    div.innerHTML = `<img src="${msg.sender==="me"?"user.jpg":"therapist.jpg"}"><div class="bubble">${msg.text}</div>`;
+    messagesDiv.appendChild(div);
+  });
+  scrollToBottom();
+}
+
+// Add user message
+function addUserMessage(text){
+  const msgDiv = document.createElement("div");
+  msgDiv.classList.add("msg","me");
+  msgDiv.innerHTML = `<img src="user.jpg"><div class="bubble">${text}</div>`;
+  messagesDiv.appendChild(msgDiv);
+  chatHistory.push({ sender:"me", text });
+  localStorage.setItem("elara_history", JSON.stringify(chatHistory));
+  if(isNearBottom()) scrollToBottom();
+}
+
+// Typing indicator
+function addTypingIndicator(){
+  const typingDiv = document.createElement("div");
+  typingDiv.classList.add("msg","typing");
+  typingDiv.innerHTML = `<img src="therapist.jpg"><div class="bubble">...</div>`;
+  messagesDiv.appendChild(typingDiv);
+  if(isNearBottom()) scrollToBottom();
+  return typingDiv;
+}
+function removeTypingIndicator(div){ if(div) div.remove(); }
+
+function addBotMessageTyping(text){
+  const typingDiv = addTypingIndicator();
+  const bubble = typingDiv.querySelector(".bubble");
+  bubble.textContent='';
+  let i=0;
+  const interval = setInterval(()=>{
+    bubble.textContent += text[i];
+    if(isNearBottom()) scrollToBottom();
+    i++;
+    if(i>=text.length){
+      clearInterval(interval);
+      removeTypingIndicator(typingDiv);
+      const finalMsg = document.createElement("div");
+      finalMsg.classList.add("msg");
+      finalMsg.innerHTML=`<img src="therapist.jpg"><div class="bubble">${text}</div>`;
+      messagesDiv.appendChild(finalMsg);
+      chatHistory.push({ sender:"bot", text });
+      localStorage.setItem("elara_history", JSON.stringify(chatHistory));
+      if(isNearBottom()) scrollToBottom();
+    }
+  },30);
+}
+
+// Greeting
+function getGreeting(){
+  const name = localStorage.getItem("userName") || "";
+  const hour = new Date().getHours();
+  const greetName = name ? ` ${name}` : "";
+  if(hour>=5 && hour<12) return `Good morning${greetName}. I'm Dr. Elara, your therapist. How are you feeling today?`;
+  if(hour>=12 && hour<17) return `Good afternoon${greetName}. I'm Dr. Elara, your therapist. How are you feeling today?`;
+  if(hour>=17 && hour<21) return `Good evening${greetName}. I'm Dr. Elara, your therapist. How are you feeling today?`;
+  return `Hello${greetName}. It's late, but I'm here to listen. How are you feeling right now?`;
+}
+
+// Save name and lock page
+function saveName(){
+  const nameInput = document.getElementById("username").value.trim();
+  if(!nameInput){ alert("Please enter your name."); return; }
+  localStorage.setItem("userName", nameInput);
+
+  namePage.style.display = "none";
+  chatContainer.style.display = "flex";
+  chatContainer.classList.add("fade-in");
+
+  // Lock back navigation
+  history.replaceState({}, "", location.href);
+
+  renderHistory();
+  if(chatHistory.length===0) addBotMessageTyping(getGreeting());
+}
+
+// Send message to OpenAI
+async function sendMessage(){
+  const text=input.value.trim(); if(!text) return; addUserMessage(text); input.value='';
+  try{
+    const res = await fetch("https://api.openai.com/v1/chat/completions",{method:"POST", headers:{"Content-Type":"application/json","Authorization":`Bearer ${API_KEY}`}, body:JSON.stringify({model:"gpt-4o-mini", messages:[{role:"system", content:"You are a calm, warm, supportive therapist."},{role:"user", content:text}]})});
+    const data = await res.json();
+    if(!data || !data.choices) addBotMessageTyping("Hmm, something went wrong.");
+    else addBotMessageTyping(data.choices[0].message.content);
+  }catch(e){ addBotMessageTyping("Error: Failed to fetch"); }
+}
+
+// Logout
+document.getElementById("logoutBtn").addEventListener("click",()=>{
+  if(confirm("Are you sure you want to logout?")){
+    localStorage.removeItem("userName");
+    localStorage.removeItem("elara_history");
+    location.reload();
+  }
+});
+
+// Dark mode toggle
+darkBtn.addEventListener("click",()=>{
+  document.body.classList.toggle("dark");
+  document.getElementById("loadingScreen").classList.toggle("dark");
+});
+
+// On load
+window.addEventListener("load",()=>{
+  setTimeout(()=>{document.getElementById("loadingScreen").style.display="none";},1200);
+  setTimeout(()=>{
+    const name = localStorage.getItem("userName");
+    if(name){
+      namePage.style.display = "none";
+      chatContainer.style.display = "flex";
+      chatContainer.classList.add("fade-in");
+      renderHistory();
+      history.replaceState({}, "", location.href);
+    } else {
+      namePage.style.display = "flex";
+      namePage.classList.add("fade-in");
+    }
+  },1300);
+});
+</script>
+</body>
+  </html>
