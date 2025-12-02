@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. Elara - Confirmation</title>
+<style>body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  animation: floatBg 8s ease-in-out infinite alternate;
+}
+
+@keyframes floatBg {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.container {
+  background: #fff;
+  padding: 50px 35px;
+  border-radius: 30px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  position: relative;
+  overflow: hidden;
+  animation: popIn 0.8s ease forwards;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+h1 {
+  font-size: 32px;
+  color: #ff6f61;
+  font-weight: bold;
+  margin-bottom: 25px;
+  text-shadow: 1px 1px #ffd6d6;
+  animation: wiggle 1s infinite alternate;
+}
+
+@keyframes wiggle {
+  0% { transform: rotate(-2deg); }
+  100% { transform: rotate(2deg); }
+}
+
+ul {
+  text-align: left;
+  margin-bottom: 30px;
+  padding-left: 25px;
+  color: #555;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+ul li {
+  margin-bottom: 14px;
+  position: relative;
+}
+
+ul li::before {
+  content: "🌟";
+  position: absolute;
+  left: -25px;
+  top: 0;
+}
+
+button {
+  background: linear-gradient(45deg, #ff6f61, #ffb347);
+  color: white;
+  font-weight: 700;
+  border: none;
+  padding: 14px 35px;
+  border-radius: 50px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(255,111,97,0.4);
+}
+
+button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 25px rgba(255,111,97,0.5);
+}
+
+/* Floating bubbles for whimsy */
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.2;
+  animation: float 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes float {
+  0% { transform: translateY(100vh) translateX(0) rotate(0deg); }
+  100% { transform: translateY(-150px) translateX(50px) rotate(360deg); }
+}
+  
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Before We Begin 😄</h1>
+  <ul>
+    <li>Confirm you've read this information about Dr. Elara.</li>
+    <li>Dr. Elara is not designed for people under 18 years old.</li>
+    <li>This is a supportive AI therapist; it does not replace professional medical or psychological help.</li>
+    <li>Your conversations are private but may be stored locally for better interaction.</li>
+    <li>Use the app responsibly and understand that it provides guidance and conversation, not diagnosis.</li>
+  </ul>
+  <button onclick="proceed()">I Understand 🚀</button>
+</div>
+
+<script>
+function proceed(){
+  // Redirect to the next page (e.g., name input page)
+  window.location.href = "welcome.html"; // Replace with your actual next page URL
+}
+</script>
+
+</body>
+  </html>
+  
